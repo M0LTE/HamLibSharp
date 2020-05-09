@@ -12,7 +12,7 @@
     <Deterministic>false</Deterministic>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Jae Stutzman, Tom Fanning</Authors>
-    <PackageLicenseExpression>LGPL</PackageLicenseExpression>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
