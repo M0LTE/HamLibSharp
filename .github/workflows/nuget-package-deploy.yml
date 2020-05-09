@@ -29,4 +29,4 @@ jobs:
               --api-key ${{ secrets.NUGET_DEPLOY_KEY }}
               --source https://api.nuget.org/v3/index.json
               --skip-duplicate
-              --no-symbols
+              --no-symbols 1
