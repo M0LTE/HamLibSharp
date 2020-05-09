@@ -27,7 +27,7 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle ("HamLibSharp")]
-[assembly: AssemblyDescription ("Binding for the HamLib Amateur Radio control library")]
+[assembly: AssemblyDescription (".NET Standard binding for the HamLib Amateur Radio control library.\r\nNuGet package built from .NET Standard fork at https://github.com/M0LTE/HamLibSharp")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("Jae Stutzman")]
 [assembly: AssemblyProduct ("HamLibSharp")]

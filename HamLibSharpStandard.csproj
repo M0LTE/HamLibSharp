@@ -10,6 +10,9 @@
 
   <PropertyGroup>
     <Deterministic>false</Deterministic>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Jae Stutzman, Tom Fanning</Authors>
+    <PackageLicenseExpression>LGPL</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
