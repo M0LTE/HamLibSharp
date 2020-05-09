@@ -15,6 +15,10 @@
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Version>3.1.0</Version>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="HamLibSharpTest\**" />
     <Compile Remove="RigCaps\**" />
