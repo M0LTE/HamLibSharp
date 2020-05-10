@@ -122,7 +122,7 @@ namespace HamLibSharp.Utils
 					dllPath = System.IO.Path.Combine (dllDir, dllName);
 				}
 
-				if (!File.Exists (dllPath)) {
+				if (!File.Exists (dllPath) || string.IsNullOrWhiteSpace(dllDir)) {
 					var thisAssemblyLocation = Assembly.GetExecutingAssembly().CodeBase.Replace("file:///", "");
 					var dir = Path.GetDirectoryName(thisAssemblyLocation);
 					if (File.Exists(Path.Combine(dir, "libhamlib-2.dll")))
