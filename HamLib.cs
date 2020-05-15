@@ -50,7 +50,7 @@ namespace HamLibSharp
 		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		public delegate int RigListCallback (IntPtr rig_caps, IntPtr rig_ptr);
 
-		internal const string dllName = "libhamlib-2.dll";
+		internal const string dllName = "libhamlib-2.dll"; // linux: cp libhamlib.so.2 libhamlib-2.dll.so
 
 		static HamLib ()
 		{
