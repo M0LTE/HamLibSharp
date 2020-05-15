@@ -124,11 +124,16 @@ namespace HamLibSharp.Utils
 
 				if (!File.Exists (dllPath) || string.IsNullOrWhiteSpace(dllDir)) {
 					var thisAssemblyLocation = Assembly.GetExecutingAssembly().CodeBase.Replace("file:///", "");
-					var dir = Path.GetDirectoryName(thisAssemblyLocation);
+					var dir = Path.GetDirectoryName(thisAssemblyLocation); // may be shadow copied
 					var file = Path.Combine(dir, "libhamlib-2.dll");
+					var inCurrentWorkingDir = Path.Combine(Environment.CurrentDirectory, "libhamlib-2.dll");
 					if (File.Exists(file))
 					{
 						dllDir = dir;
+					}
+					else if (File.Exists(inCurrentWorkingDir))
+					{
+						dllDir = Environment.CurrentDirectory;
 					}
 					else
 					{
