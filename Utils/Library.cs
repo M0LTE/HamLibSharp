@@ -125,13 +125,14 @@ namespace HamLibSharp.Utils
 				if (!File.Exists (dllPath) || string.IsNullOrWhiteSpace(dllDir)) {
 					var thisAssemblyLocation = Assembly.GetExecutingAssembly().CodeBase.Replace("file:///", "");
 					var dir = Path.GetDirectoryName(thisAssemblyLocation);
-					if (File.Exists(Path.Combine(dir, "libhamlib-2.dll")))
+					var file = Path.Combine(dir, "libhamlib-2.dll");
+					if (File.Exists(file))
 					{
 						dllDir = dir;
 					}
 					else
 					{
-						throw new FileNotFoundException(string.Format("Unable to Load Dll. File not found: {0}", Path.GetFullPath(dllPath)), dllPath);
+						throw new FileNotFoundException($"Unable to Load Dll. File not found: {file}", file);
 					}
 				}
 
