@@ -141,14 +141,37 @@ namespace HamLibSharp.Utils
 					}
 				}
 
-				var path = Environment.GetEnvironmentVariable ("Path");
-				var fullDllDir = Path.GetFullPath (dllDir);
-				Environment.SetEnvironmentVariable ("Path", fullDllDir + ";" + path);
-				path = Environment.GetEnvironmentVariable ("Path");
+				var path = Environment.GetEnvironmentVariable("Path");
+				var fullDllDir = Path.GetFullPath(dllDir);
+				Environment.SetEnvironmentVariable("Path", fullDllDir + ";" + path);
+				path = Environment.GetEnvironmentVariable("Path");
 				//Console.WriteLine (path);
 
 				//Console.WriteLine (dllPath);
 				return true; //LoadLibraryInterop (dllPath) != IntPtr.Zero ? true : false;
+			}
+			else if (Environment.OSVersion.Platform == PlatformID.Unix)
+			{
+				// on Linux, if libhamlib.so.2 or libhamlib-2.dll.so exists in the same directory as this assembly
+				// was started from (not the shadow-copy of it in /var/tmp/.net), and it doesn't exist next to 
+				// the copy of the assembly being run (may be the shadow copy of it), copy it into that directory.
+				// overwrite it if necessary (this permits hamlib version changes, whether to the shadow copy
+				// happens or not)
+
+				var thisAssemblyLocation = Assembly.GetExecutingAssembly().CodeBase.Replace("file://", "");
+				var destLib = Path.Combine(thisAssemblyLocation, "libhamlib-2.dll.so");
+				var sourceDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+				var unrenamedSourceFile = Path.Combine(sourceDir, "libhamlib.so.2");
+				var renamedSourceFile = Path.Combine(sourceDir, "libhamlib-2.dll.so");
+
+				if (File.Exists(renamedSourceFile))
+				{
+					File.Copy(renamedSourceFile, destLib, true);
+				}
+				else if (File.Exists(unrenamedSourceFile))
+				{
+					File.Copy(unrenamedSourceFile, destLib, true);
+				}
 			}
 
 			return true;
