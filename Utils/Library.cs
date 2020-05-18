@@ -166,15 +166,25 @@ namespace HamLibSharp.Utils
 
 				if (File.Exists(renamedSourceFile))
 				{
+					DebugWriteLine($"Copying {renamedSourceFile} to {destLib}");
 					File.Copy(renamedSourceFile, destLib, true);
 				}
 				else if (File.Exists(unrenamedSourceFile))
 				{
+					DebugWriteLine($"Copying {unrenamedSourceFile} to {destLib}");
 					File.Copy(unrenamedSourceFile, destLib, true);
 				}
 			}
 
 			return true;
+		}
+
+		private static void DebugWriteLine(string v)
+		{
+			if (File.Exists("/tmp/debug-hamlibsharp"))
+			{
+				Console.WriteLine(v);
+			}
 		}
 
 		// This is only available on Windows...but only required for Windows to work around 32-bit vs 64-bit DllImport issues
