@@ -158,7 +158,7 @@ namespace HamLibSharp.Utils
 				// overwrite it if necessary (this permits hamlib version changes, whether to the shadow copy
 				// happens or not)
 
-				var thisAssemblyLocation = Assembly.GetExecutingAssembly().CodeBase.Replace("file://", "");
+				var thisAssemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase.Replace("file://", ""));
 				var destLib = Path.Combine(thisAssemblyLocation, "libhamlib-2.dll.so");
 				var sourceDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
 				var unrenamedSourceFile = Path.Combine(sourceDir, "libhamlib.so.2");
