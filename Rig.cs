@@ -28,6 +28,9 @@ using System.Runtime.InteropServices;
 using HamLibSharp.Utils;
 using HamLibSharp.x86;
 using HamLibSharp.x64;
+using System.Diagnostics;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace HamLibSharp
 {
@@ -40,8 +43,10 @@ namespace HamLibSharp
 		IntPtr Callbacks { get; }
 	};
 
-	public partial class Rig : IDisposable
+	public partial class Rig : IDisposable, INotifyPropertyChanged
 	{
+		public event PropertyChangedEventHandler PropertyChanged;
+
 		const int CommErrors = 10;
 		// milliseconds
 		const int UpdateRate = 250;
@@ -177,10 +182,21 @@ namespace HamLibSharp
 				}
 			}
 			private set {
+				bool changed;
 				lock (this) {
+					changed = freq != value;
 					freq = value;
 				}
+				if (changed)
+				{
+					OnPropertyChanged();
+				}
 			}
+		}
+
+		private void OnPropertyChanged([CallerMemberName] string name = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
 
 		long width;
@@ -196,8 +212,15 @@ namespace HamLibSharp
 				}
 			}
 			private set {
-				lock (this) {
+				bool changed;
+				lock (this)
+				{
+					changed = mode != value;
 					mode = value;
+				}
+				if (changed)
+				{
+					OnPropertyChanged();
 				}
 			}
 		}
@@ -226,8 +249,126 @@ namespace HamLibSharp
 				}
 			}
 			private set {
+				var changed = ptt != value;
 				lock (this) {
 					ptt = value;
+				}
+				if (changed)
+				{
+					OnPropertyChanged();
+				}
+			}
+		}
+
+		int signalLevel;
+
+		/// <summary>
+		/// dB relative to S9
+		/// </summary>
+		public int SignalLevel
+		{
+			get
+			{
+				if (updateRate > 0)
+				{
+					lock (this)
+					{
+						return signalLevel;
+					}
+				}
+				else
+				{
+					GetLevel(RigLevel.RIG_LEVEL_STRENGTH, out int val);
+					return val;
+				}
+			}
+			private set
+			{
+				var changed = signalLevel != value;
+				lock (this)
+				{
+					signalLevel = value;
+				}
+				if (changed)
+				{
+					OnPropertyChanged();
+				}
+			}
+		}
+
+		float rfPowerLevel;
+
+		/// <summary>
+		/// 0.0 .. 1.0
+		/// </summary>
+		public float RfPowerLevel
+		{
+			get
+			{
+				if (updateRate > 0)
+				{
+					lock (this)
+					{
+						return rfPowerLevel;
+					}
+				}
+				else
+				{
+					GetLevel(RigLevel.RFPower, out float val);
+					return val;
+				}
+			}
+			private set
+			{
+				var changed = rfPowerLevel != value;
+				lock (this)
+				{
+					rfPowerLevel = value;
+				}
+				if (changed)
+				{
+					OnPropertyChanged();
+				}
+			}
+		}
+
+		/// <summary>
+		/// S meter level, e.g. S4 would be 4, S9+ would be 10
+		/// </summary>
+		public int S => (SignalLevel + 20) / 6;
+
+		float swrLevel;
+
+		/// <summary>
+		/// 0..infinite
+		/// </summary>
+		public float SwrLevel
+		{
+			get
+			{
+				if (updateRate > 0)
+				{
+					lock (this)
+					{
+						return swrLevel;
+					}
+				}
+				else
+				{
+					GetLevel(RigLevel.Swr, out float val);
+					return val;
+				}
+			}
+			private set
+			{
+				var changed = swrLevel != value;
+				lock (this)
+				{
+					swrLevel = value;
+				}
+				if (changed)
+				{
+					OnPropertyChanged();
 				}
 			}
 		}
@@ -561,6 +702,9 @@ namespace HamLibSharp
 				UpdateFrequency (RigVfo.Current);
 				UpdateMode (RigVfo.Current);
 				UpdatePtt (RigVfo.Current);
+				UpdateSignalLevel(RigVfo.Current);
+				//UpdateSwrLevel(RigVfo.Current);
+				UpdateRfPowerLevel(RigVfo.Current);
 				timer.Enabled = true;
 			}
 		}
@@ -731,12 +875,15 @@ namespace HamLibSharp
 		/// Will use Task Queue if Start() has been called.
 		/// </summary>
 		/// <param name="vfo">The target VFO.</param>
-		public void UpdateFrequency (int vfo = RigVfo.Current)
+		public void UpdateFrequency(int vfo = RigVfo.Current)
 		{
-			if (thread != null) {
-				taskQueue.Add (() => Freq = GetFrequency (vfo));
-			} else {
-				Freq = GetFrequency (vfo);
+			if (thread != null)
+			{
+				taskQueue.Add(() => Freq = GetFrequency(vfo));
+			}
+			else
+			{
+				Freq = GetFrequency(vfo);
 			}
 		}
 
@@ -881,6 +1028,75 @@ namespace HamLibSharp
 				taskQueue.Add (() => Ptt = GetPtt (vfo));
 			} else {
 				Ptt = GetPtt (vfo);
+			}
+		}
+
+		/// <summary>
+		/// Retrieves the updated signal level of the target VFO.
+		/// Will use Task Queue if Start() has been called.
+		/// </summary>
+		/// <param name="vfo">The target VFO.</param>
+		public void UpdateSignalLevel (int vfo = RigVfo.Current)
+		{
+			void setSignalLevel()
+			{
+				GetLevel(RigLevel.RIG_LEVEL_STRENGTH, out int val, vfo);
+				SignalLevel = val;
+			}
+
+			if (thread != null)
+			{
+				taskQueue.Add(setSignalLevel);
+			}
+			else
+			{
+				setSignalLevel();
+			}
+		}
+
+		/// <summary>
+		/// Retrieves the updated SWR level of the target VFO.
+		/// Will use Task Queue if Start() has been called.
+		/// </summary>
+		/// <param name="vfo">The target VFO.</param>
+		public void UpdateSwrLevel(int vfo = RigVfo.Current)
+		{
+			void setSwrLevel()
+			{
+				GetLevel(RigLevel.Swr, out float val, vfo);
+				SwrLevel = val;
+			}
+
+			if (thread != null)
+			{
+				taskQueue.Add(setSwrLevel);
+			}
+			else
+			{
+				setSwrLevel();
+			}
+		}
+
+		/// <summary>
+		/// Retrieves the updated SWR level of the target VFO.
+		/// Will use Task Queue if Start() has been called.
+		/// </summary>
+		/// <param name="vfo">The target VFO.</param>
+		public void UpdateRfPowerLevel(int vfo = RigVfo.Current)
+		{
+			void setRfPowerLevel()
+			{
+				GetLevel(RigLevel.RFPower, out float val, vfo);
+				RfPowerLevel = val;
+			}
+
+			if (thread != null)
+			{
+				taskQueue.Add(setRfPowerLevel);
+			}
+			else
+			{
+				setRfPowerLevel();
 			}
 		}
 
@@ -1970,6 +2186,18 @@ namespace HamLibSharp
 		static public int GHz (int f)
 		{
 			return f * 1000000000;
+		}
+
+		public static string SMeterString(int sLevel)
+		{
+			if (sLevel < 0) throw new ArgumentOutOfRangeException($"S level was {sLevel} but cannot be negative");
+
+			if (sLevel < 10)
+				return $"S{sLevel}";
+
+			int plusses = sLevel - 9;
+
+			return $"S9{new string('+', plusses)}";
 		}
 
 		public static string FrequencyToString (double frequencyHz)

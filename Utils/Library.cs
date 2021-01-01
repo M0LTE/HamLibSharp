@@ -122,29 +122,24 @@ namespace HamLibSharp.Utils
 					dllPath = System.IO.Path.Combine (dllDir, dllName);
 				}
 
-				if (!File.Exists (dllPath) || string.IsNullOrWhiteSpace(dllDir)) {
-					var thisAssemblyLocation = Assembly.GetExecutingAssembly().CodeBase.Replace("file:///", "");
-					var dir = Path.GetDirectoryName(thisAssemblyLocation); // may be shadow copied
-					var file = Path.Combine(dir, "libhamlib-2.dll");
-					var inCurrentWorkingDir = Path.Combine(Environment.CurrentDirectory, "libhamlib-2.dll");
-					if (File.Exists(file))
+				if (!File.Exists (dllPath)) {
+
+					string commonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "hamlib-w64-3.1", "bin");
+					string commonLib = Path.Combine(commonPath, dllName);
+					if (File.Exists(commonLib))
 					{
-						dllDir = dir;
-					}
-					else if (File.Exists(inCurrentWorkingDir))
-					{
-						dllDir = Environment.CurrentDirectory;
+						dllDir = commonPath;
 					}
 					else
 					{
-						throw new FileNotFoundException($"Unable to Load Dll. File not found: {file}", file);
+						throw new FileNotFoundException(string.Format("Unable to Load Dll. File not found: {0}", Path.GetFullPath(dllPath)), dllPath);
 					}
 				}
 
-				var path = Environment.GetEnvironmentVariable("Path");
-				var fullDllDir = Path.GetFullPath(dllDir);
-				Environment.SetEnvironmentVariable("Path", fullDllDir + ";" + path);
-				path = Environment.GetEnvironmentVariable("Path");
+				var path = Environment.GetEnvironmentVariable ("Path");
+				var fullDllDir = Path.GetFullPath (dllDir);
+				Environment.SetEnvironmentVariable ("Path", fullDllDir + ";" + path);
+				path = Environment.GetEnvironmentVariable ("Path");
 				//Console.WriteLine (path);
 
 				//Console.WriteLine (dllPath);
@@ -152,14 +147,6 @@ namespace HamLibSharp.Utils
 			}
 
 			return true;
-		}
-
-		private static void DebugWriteLine(string v)
-		{
-			if (File.Exists("/tmp/debug-hamlibsharp"))
-			{
-				Console.WriteLine(v);
-			}
 		}
 
 		// This is only available on Windows...but only required for Windows to work around 32-bit vs 64-bit DllImport issues

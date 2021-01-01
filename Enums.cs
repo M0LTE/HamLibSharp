@@ -479,75 +479,171 @@ namespace HamLibSharp
 	[Flags]
 	public enum RigLevel
 	{
-		/// '' -- No Level
+		/// <summary>
+		/// No Level 
+		/// </summary>
 		None =	0,
+
+		/// <summary>
 		/// PREAMP -- Preamp, arg int (dB)
+		/// </summary>
 		Preamp =	(1 << 0),
+
+		/// <summary>
 		/// ATT -- Attenuator, arg int (dB)
+		/// </summary>
 		Attenuator = (1 << 1),
+
+		/// <summary>
 		/// VOX -- VOX delay, arg int (tenth of seconds)
+		/// </summary>
 		Vox = (1 << 2),
+
+		/// <summary>
 		/// AF -- Volume, arg float [0.0 ... 1.0]
+		/// </summary>
 		Volume = (1 << 3),
+
+		/// <summary>
 		/// RF -- RF gain (not TX power), arg float [0.0 ... 1.0]
+		/// </summary>
 		RF = (1 << 4),
+
+		/// <summary>
 		/// SQL -- Squelch, arg float [0.0 ... 1.0]
+		/// </summary>
 		Squelch = (1 << 5),
+
+		/// <summary>
 		/// IF -- IF, arg int (Hz)
+		/// </summary>
 		IF = (1 << 6),
+
+		/// <summary>
 		/// APF -- Audio Peak Filter, arg float [0.0 ... 1.0]
+		/// </summary>
 		AudioPeakFilter = (1 << 7),
+
+		/// <summary>
 		/// NR -- Noise Reduction, arg float [0.0 ... 1.0]
+		/// </summary>
 		NoiseReduction = (1 << 8),
+
+		/// <summary>
 		/// PBT_IN -- Twin PBT (inside), arg float [0.0 ... 1.0]
+		/// </summary>
 		TwinPbtIn =	(1 << 9),
+
+		/// <summary>
 		/// PBT_OUT -- Twin PBT (outside), arg float [0.0 ... 1.0]
+		/// </summary>
 		TwinPbtOut =	(1 << 10),
+
+		/// <summary>
 		/// CWPITCH -- CW pitch, arg int (Hz)
+		/// </summary>
 		CWPitch =	(1 << 11),
+
+		/// <summary>
 		/// RFPOWER -- RF Power, arg float [0.0 ... 1.0]
+		/// </summary>
 		RFPower =	(1 << 12),
+
+		/// <summary>
 		/// MICGAIN -- MIC Gain, arg float [0.0 ... 1.0]
+		/// </summary>
 		MicGain =	(1 << 13),
+
+		/// <summary>
 		/// KEYSPD -- Key Speed, arg int (WPM)
+		/// </summary>
 		KeySpeed =	(1 << 14),
+
+		/// <summary>
 		/// NOTCHF -- Notch Freq., arg int (Hz)
+		/// </summary>
 		NotchFrequency =	(1 << 15),
+
+		/// <summary>
 		/// COMP -- Compressor, arg float [0.0 ... 1.0]
+		/// </summary>
 		Compressor =	(1 << 16),
+
+		/// <summary>
 		/// AGC -- AGC, arg int (see enum agc_level_e)
+		/// </summary>
 		Agc = (1 << 17),
+
+		/// <summary>
 		/// BKINDL -- BKin Delay, arg int (tenth of dots)
+		/// </summary>
 		BKInDelay =	(1 << 18),
+
+		/// <summary>
 		/// BAL -- Balance (Dual Watch), arg float [0.0 ... 1.0]
+		/// </summary>
 		Balance =	(1 << 19),
+
+		/// <summary>
 		/// METER -- Display meter, arg int (see enum meter_level_e)
+		/// </summary>
 		DisplayMeter =	(1 << 20),
+
+		/// <summary>
 		/// VOXGAIN -- VOX gain level, arg float [0.0 ... 1.0]
+		/// </summary>
 		VoxGain =	(1 << 21),
+
+		/// <summary>
 		/// Synonym of RIG_LEVEL_VOX
+		/// </summary>
 		VoxDelay = Vox,
+
+		/// <summary>
 		/// ANTIVOX -- anti-VOX level, arg float [0.0 ... 1.0]
+		/// </summary>
 		AntiVox =	(1 << 22),
+
+		/// <summary>
 		/// SLOPE_LOW -- Slope tune, low frequency cut,
+		/// </summary>
 		SlopeLow =	(1 << 23),
+
+		/// <summary>
 		/// SLOPE_HIGH -- Slope tune, high frequency cut,
+		/// </summary>
 		SlopeHigh =	(1 << 24),
+
+		/// <summary>
 		/// BKIN_DLYMS -- BKin Delay, arg int Milliseconds
+		/// </summary>
 		BKInDelayMS =	(1 << 25),
 
-		//These are not settable
-
-		/// RAWSTR -- Raw (A/D) value for signal strength, specific to each rig, arg int
+		/// <summary>
+		/// (read-only) RAWSTR -- Raw (A/D) value for signal strength, specific to each rig, arg int
+		/// </summary>
 		RIG_LEVEL_RAWSTR =	(1 << 26),
-		/// SQLSTAT -- SQL status, arg int (open=1/closed=0). Deprecated, use get_dcd instead
+
+		/// <summary>
+		/// (read-only) SQLSTAT -- SQL status, arg int (open=1/closed=0). Deprecated, use get_dcd instead
+		/// </summary>
 		RIG_LEVEL_SQLSTAT =	(1 << 27),
-		/// SWR -- SWR, arg float [0.0 ... infinite]
+
+		/// <summary>
+		/// (read-only) SWR -- SWR, arg float [0.0 ... infinite]
+		/// </summary>
 		Swr = (1 << 28),
-		/// ALC -- ALC, arg float
+
+		/// <summary>
+		/// (read-only) ALC -- ALC, arg float
+		/// </summary>
 		Alc = (1 << 29),
-		/// STRENGTH -- Effective (calibrated) signal strength relative to S9, arg int (dB)
+
+		/// <summary>
+		/// (read-only) STRENGTH -- Effective (calibrated) signal strength relative to S9, arg int (dB)
+		/// </summary>
 		RIG_LEVEL_STRENGTH =	(1 << 30)
+		
 		/// Bandwidth Control, arg int (Hz)
 		// RIG_LEVEL_BWC =	(1<<31)
 	}
